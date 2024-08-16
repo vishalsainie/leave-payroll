@@ -1,0 +1,8 @@
+build:
+  version: "2.0"
+
+accounts:
+  message: "Welcome to payroll salary related QA APIs "
+  contactDetails:
+    name: "Rishabh Ramesh Maloo - Developer"
+    email: "rishabh.maloo@ukg.com"

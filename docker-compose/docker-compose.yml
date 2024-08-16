@@ -58,7 +58,7 @@ services:
     image: rishabhmaloo/salary:1.0.1
     container_name: "salary"
     ports:
-      - "9000:9000"
+      - "8080:8080"
     deploy:
       resources:
         limits:

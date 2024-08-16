@@ -1,0 +1,8 @@
+build:
+  version: "1.0"
+
+accounts:
+  message: "Hey, welcome to payroll salary related webhook APIs"
+  contactDetails:
+    name: "Rishabh Ramesh Maloo - Developer"
+    email: "rishabh.maloo@ukg.com"
