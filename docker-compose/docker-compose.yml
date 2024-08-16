@@ -18,12 +18,47 @@ services:
     networks:
       - payroll
 
+  gatewayserver:
+    image: vishalsaini410/gateway-server:1.0.0
+    container_name: gatewayserver
+    ports:
+      - 8072:8072
+    depends_on:
+      leave:
+        condition: service_healthy
+    environment:
+      SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071"
+      SPRING_PROFILES_ACTIVE: default
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eurekaserver:8070/eureka/"
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - payroll
 
   leave:
     image: vishalsaini410/leave:1.0.0
     container_name: "leave"
     ports:
       - "8080:8080"
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    depends_on:
+      configserver:
+        condition: service_healthy
+    environment:
+      SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
+    networks:
+      - payroll
+
+  salary:
+    image: rishabhmaloo/salary:1.0.1
+    container_name: "salary"
+    ports:
+      - "9000:9000"
     deploy:
       resources:
         limits:

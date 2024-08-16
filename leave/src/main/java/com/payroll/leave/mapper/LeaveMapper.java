@@ -14,7 +14,7 @@ public class LeaveMapper {
         return leave;
     }
 
-    public static LeaveDto mapToLeaveDto(Leave leave, LeaveDto leaveDto){
+    public static LeaveDto mapToLeaveDto(Leave leave, LeaveDto leaveDto) {
 
         leaveDto.setEmployeeId(leave.getEmployeeId());
         leaveDto.setCategory(leave.getCategory());
@@ -22,8 +22,6 @@ public class LeaveMapper {
         leaveDto.setDate(leave.getDate());
         return leaveDto;
     }
-
-
 
 }
 

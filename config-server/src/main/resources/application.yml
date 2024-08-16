@@ -9,7 +9,7 @@ spring:
     config:
       server:
         git:
-          uri : "https://github.com/vishalsainie/payroll.git"
+          uri : "https://github.com/vishalsainie/leave-payroll.git"
           timeout: 10
           default-label: main
           force-pull: true

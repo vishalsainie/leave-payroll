@@ -14,16 +14,14 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
+@Validated
 public class LeaveController {
 
     @Value("${build.version}")
     private String buildVersion;
 
-    private final ILeaveService iLeaveService;
-
-    public LeaveController(ILeaveService iLeaveService) {
-        this.iLeaveService = iLeaveService;
-    }
+    @Autowired
+    private ILeaveService iLeaveService;
 
     @PostMapping("/create")
     public ResponseEntity<ResponseDto> createAccounts(@RequestBody LeaveDto leaveDto) {
@@ -33,7 +31,7 @@ public class LeaveController {
     }
 
     @GetMapping("/fetch")
-    public ResponseEntity<LeaveDto> fetchAccountsDetails(@RequestParam Long employeeId) {
+    public ResponseEntity<LeaveDto> fetchAccountsDetails(@RequestParam @Valid Long employeeId) {
         LeaveDto leaveDto = iLeaveService.fetchDetails(employeeId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(leaveDto);
