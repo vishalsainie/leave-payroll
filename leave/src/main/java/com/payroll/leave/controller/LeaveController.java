@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api")
@@ -37,11 +38,12 @@ public class LeaveController {
     }
 
     @GetMapping("/fetch")
-    public ResponseEntity<LeaveDto> fetchAccountsDetails(@RequestParam Long employeeId) {
-        LeaveDto leaveDto = iLeaveService.fetchDetails(employeeId);
+    public ResponseEntity<LeaveDto> fetchAccountsDetails(@RequestParam Long employeeId, String date) {
+        LeaveDto leaveDto = iLeaveService.fetchDetails(employeeId, date);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(leaveDto);
     }
+
 
     @PutMapping("/update")
     public ResponseEntity<ResponseDto> updateDetails(@RequestBody LeaveDto leaveDto) {
@@ -56,8 +58,8 @@ public class LeaveController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<ResponseDto> deleteAccounts(@RequestParam Long employeeId){
-        boolean isDeleted = iLeaveService.deleteAccounts(employeeId);
+    public ResponseEntity<ResponseDto> deleteAccounts(@RequestParam Long employeeId, String date){
+        boolean isDeleted = iLeaveService.deleteAccounts(employeeId, date);
         if (isDeleted) {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResponseDto("Deleted successfully", HttpStatus.OK));
@@ -71,5 +73,12 @@ public class LeaveController {
     public ResponseEntity<String> getBuildInfo(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(buildVersion);
+    }
+
+    @GetMapping("/fetch-all-leave")
+    public ResponseEntity<List<LeaveDto>> fetchAllLeave(@RequestParam Long employeeId) {
+        List<LeaveDto> leaveDtoList = iLeaveService.fetchAllDetails(employeeId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(leaveDtoList);
     }
 }

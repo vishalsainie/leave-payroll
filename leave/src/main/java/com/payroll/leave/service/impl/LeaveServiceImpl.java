@@ -11,20 +11,23 @@ import com.payroll.leave.service.ILeaveService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class LeaveServiceImpl implements ILeaveService {
 
-    @Autowired
     private LeaveRepository leaveRepository;
 
     @Override
     public void createAccount(LeaveDto leaveDto) {
 
         Long employeeId = leaveDto.getEmployeeId();
-        Optional<Leave> foundLeave = leaveRepository.findByEmployeeId(employeeId);
+        String date = leaveDto.getDate();
+        Optional<Leave> foundLeave = leaveRepository.findByEmployeeIdAndDate(employeeId, date);
 
         if (foundLeave.isPresent()) {
             throw new LeaveAlreadyExistsException("Leave already exists for given employee ID " + employeeId);
@@ -35,8 +38,8 @@ public class LeaveServiceImpl implements ILeaveService {
     }
 
     @Override
-    public LeaveDto fetchDetails(Long employeeId) {
-        Leave leave = leaveRepository.findByEmployeeId(employeeId).orElseThrow(
+    public LeaveDto fetchDetails(Long employeeId, String date) {
+        Leave leave = leaveRepository.findByEmployeeIdAndDate(employeeId, date).orElseThrow(
                 () -> new ResourceNotFoundException("Leave", "Employee ID", employeeId)
         );
 
@@ -49,7 +52,10 @@ public class LeaveServiceImpl implements ILeaveService {
 
         boolean isUpdated = false;
 
-        Leave leave = leaveRepository.findByEmployeeId(leaveDto.getEmployeeId()).orElseThrow(
+        Long employeeId = leaveDto.getEmployeeId();
+        String date = leaveDto.getDate();
+
+        Leave leave = leaveRepository.findByEmployeeIdAndDate(employeeId, date).orElseThrow(
                 () -> new ResourceNotFoundException("Leave", "employee ID", leaveDto.getEmployeeId())
         );
 
@@ -65,12 +71,12 @@ public class LeaveServiceImpl implements ILeaveService {
     }
 
     @Override
-    public boolean deleteAccounts(Long employeeId) {
+    public boolean deleteAccounts(Long employeeId, String date) {
 
         boolean isDeleted = false;
 
-        Leave leave = leaveRepository.findByEmployeeId(employeeId).orElseThrow(
-                () -> new ResourceNotFoundException("Leave", "Employee Id", employeeId)
+        Leave leave = leaveRepository.findByEmployeeIdAndDate(employeeId, date).orElseThrow(
+                () -> new ResourceNotFoundException("Leave", "employee ID", employeeId)
         );
 
         if (leave != null) {
@@ -78,6 +84,22 @@ public class LeaveServiceImpl implements ILeaveService {
             isDeleted = true;
         }
         return isDeleted;
+    }
+
+    @Override
+    public List<LeaveDto> fetchAllDetails(Long employeeId) {
+        List<Leave> leaveList = leaveRepository.findByEmployeeId(employeeId);
+
+        if(leaveList.isEmpty()){
+            throw new ResourceNotFoundException("Leave", "Employee ID", employeeId);
+        }
+
+        List<LeaveDto> leaveDtoList = new ArrayList<>();
+        for (Leave leave : leaveList) {
+            LeaveDto leaveDto = LeaveMapper.mapToLeaveDto(leave, new LeaveDto());
+            leaveDtoList.add(leaveDto);
+        }
+        return leaveDtoList;
     }
 
 }
