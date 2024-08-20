@@ -30,4 +30,6 @@ public class Leave extends BaseEntity{
     private String reason;
 
     private String date;
+
+//    private Boolean communicationSw;
 }

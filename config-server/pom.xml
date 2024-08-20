@@ -80,7 +80,7 @@
 				<version>3.4.1</version>
 				<configuration>
 					<to>
-						<image>vishalsaini410/${project.artifactId}:1.0.0</image>
+						<image>vishalsaini410/${project.artifactId}:1.0.1</image>
 					</to>
 				</configuration>
 			</plugin>

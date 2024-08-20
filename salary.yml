@@ -1,8 +1,0 @@
-build:
-  version: "3.0"
-
-accounts:
-  message: "Welcome to payroll salary related docker APIs "
-  contactDetails:
-    name: "Rishabh Ramesh Maloo - Developer"
-    email: "rishabh.maloo@ukg.com"

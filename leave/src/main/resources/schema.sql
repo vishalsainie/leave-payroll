@@ -3,5 +3,6 @@ CREATE TABLE IF NOT EXISTS `leave` (
     `employee_id` INT NOT NULL,
     `category` VARCHAR(30) NOT NULL,
     `reason` VARCHAR(30) NOT NULL,
+--    `communication_sw` BOOLEAN,
     `leave_date` VARCHAR(30)
 );

@@ -4,17 +4,19 @@ package com.payroll.leave.controller;
 import com.payroll.leave.dto.LeaveDto;
 import com.payroll.leave.dto.ResponseDto;
 import com.payroll.leave.service.ILeaveService;
-import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
-@Validated
+@Tag(
+        name = "Leave Controller",
+        description = "Leave controller for Payroll"
+)
 public class LeaveController {
 
     @Value("${build.version}")
@@ -22,6 +24,10 @@ public class LeaveController {
 
     @Autowired
     private ILeaveService iLeaveService;
+
+//    public LeaveController(ILeaveService iLeaveService) {
+//        this.iLeaveService = iLeaveService;
+//    }
 
     @PostMapping("/create")
     public ResponseEntity<ResponseDto> createAccounts(@RequestBody LeaveDto leaveDto) {
@@ -31,7 +37,7 @@ public class LeaveController {
     }
 
     @GetMapping("/fetch")
-    public ResponseEntity<LeaveDto> fetchAccountsDetails(@RequestParam @Valid Long employeeId) {
+    public ResponseEntity<LeaveDto> fetchAccountsDetails(@RequestParam Long employeeId) {
         LeaveDto leaveDto = iLeaveService.fetchDetails(employeeId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(leaveDto);

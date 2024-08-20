@@ -1,6 +1,6 @@
 services:
   configserver:
-    image: vishalsaini410/config-server:1.0.0
+    image: vishalsaini410/config-server:1.0.1
     container_name: "configserver"
     ports:
       - "8071:8071"
@@ -15,6 +15,27 @@ services:
       interval: 5s
       timeout: 10s
       retries: 5
+    networks:
+      - payroll
+
+  eurekaserver:
+    image: vishalsaini410/eureka-server:1.0.1
+    container_name: eurekaserver
+    ports:
+      - "8070:8070"
+    depends_on:
+      configserver:
+        condition: service_healthy
+    healthcheck:
+      test: "curl --fail --silent localhost:8070/actuator/health/readiness | grep UP || exit 1"
+      start_period: 10s
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 700m
     networks:
       - payroll
 
@@ -38,7 +59,7 @@ services:
       - payroll
 
   leave:
-    image: vishalsaini410/leave:1.0.0
+    image: vishalsaini410/leave:1.0.1
     container_name: "leave"
     ports:
       - "8080:8080"
@@ -49,8 +70,22 @@ services:
     depends_on:
       configserver:
         condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+    healthcheck:
+      test: "curl --fail --silent localhost:8080/actuator/health/readiness | grep UP || exit 1"
+#      start_period: 10s
+#      interval: 5s
+#      timeout: 10s
+#      retries: 5
+      start_period: 45s
+      interval: 5m
+      timeout: 2m
+      retries: 5
     environment:
       SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
+      SPRING_PROFILES_ACTIVE: default
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eurekaserver:8070/eureka/"
     networks:
       - payroll
 
@@ -58,7 +93,7 @@ services:
     image: rishabhmaloo/salary:1.0.1
     container_name: "salary"
     ports:
-      - "8080:8080"
+      - "9000:8080"
     deploy:
       resources:
         limits:
@@ -66,8 +101,22 @@ services:
     depends_on:
       configserver:
         condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+    healthcheck:
+      test: "curl --fail --silent localhost:9000/actuator/health/readiness | grep UP || exit 1"
+#      start_period: 10s
+#      interval: 5s
+#      timeout: 10s
+#      retries: 5
+      start_period: 45s
+      interval: 5m
+      timeout: 2m
+      retries: 5
     environment:
       SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
+      SPRING_PROFILES_ACTIVE: default
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eurekaserver:8070/eureka/"
     networks:
       - payroll
 
