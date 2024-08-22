@@ -9,13 +9,13 @@
         <outputRelativeToContentRoot value="true" />
         <module name="config-server" />
         <module name="gateway-server" />
+        <module name="message" />
         <module name="eureka-server" />
         <module name="leave" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="employee" target="17" />
-      <module name="message" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

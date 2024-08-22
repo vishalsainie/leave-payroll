@@ -120,6 +120,37 @@ services:
     networks:
       - payroll
 
+  employee:
+    image: amankhan401/employee:1.0.4
+    container_name: "employee"
+    ports:
+      - "9001:8080"
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    depends_on:
+      configserver:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+    healthcheck:
+      test: "curl --fail --silent localhost:9000/actuator/health/readiness | grep UP || exit 1"
+      #      start_period: 10s
+      #      interval: 5s
+      #      timeout: 10s
+      #      retries: 5
+      start_period: 45s
+      interval: 5m
+      timeout: 2m
+      retries: 5
+    environment:
+      SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
+      SPRING_PROFILES_ACTIVE: default
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eurekaserver:8070/eureka/"
+    networks:
+      - payroll
+
 networks:
   payroll:
     driver: "bridge"

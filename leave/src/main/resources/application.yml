@@ -5,20 +5,46 @@ spring:
     name: leave
   config:
     import: "optional:configserver:http://localhost:8071"
-
+  cloud:
+    function:
+      definition: sendCommunication
+    stream:
+      bindings:
+        sendCommunication-out-0:
+          destination: send-communication
+        updateCommunication-in-0:
+          destination: communication-sent
+          group: ${spring.application.name}
   datasource:
-    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:mem:mydatabase
     username: sa
     password: ""
     driverClassName: org.h2.Driver
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-    database-platform: org.hibernate.dialect.H2Dialect
-  h2:
-    console:
-      enabled: true
+    jpa:
+      show-sql: true
+      hibernate:
+        ddl-auto: update
+      database-platform: org.hibernate.dialect.H2Dialect
+    h2:
+      console:
+        enabled: true
+#  datasource:
+#    url: jdbc:mysql://localhost:3306/mydatabase
+#    username: root
+#    password: rootpassword
+#
+#    jpa:
+#      show-sql: true
+#      hibernate:
+#        ddl-auto: update
+#      database-platform: org.hibernate.dialect.MySQLDialect
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    connection-timeout: 10s
 
 management:
   endpoints:

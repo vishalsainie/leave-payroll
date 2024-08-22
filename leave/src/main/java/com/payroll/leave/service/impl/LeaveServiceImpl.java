@@ -1,7 +1,9 @@
 package com.payroll.leave.service.impl;
 
 
+import com.payroll.leave.dto.EmployeesDto;
 import com.payroll.leave.dto.LeaveDto;
+import com.payroll.leave.dto.LeaveMessageDto;
 import com.payroll.leave.entity.Leave;
 import com.payroll.leave.exceptions.LeaveAlreadyExistsException;
 import com.payroll.leave.exceptions.ResourceNotFoundException;
@@ -9,7 +11,7 @@ import com.payroll.leave.mapper.LeaveMapper;
 import com.payroll.leave.repository.LeaveRepository;
 import com.payroll.leave.service.ILeaveService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,9 +23,12 @@ import java.util.Optional;
 public class LeaveServiceImpl implements ILeaveService {
 
     private LeaveRepository leaveRepository;
+    private StreamBridge streamBridge;
 
     @Override
     public void createAccount(LeaveDto leaveDto) {
+
+        EmployeesDto employeesDto = new EmployeesDto();
 
         Long employeeId = leaveDto.getEmployeeId();
         String date = leaveDto.getDate();
@@ -35,6 +40,23 @@ public class LeaveServiceImpl implements ILeaveService {
 
         Leave leave = LeaveMapper.mapToLeave(leaveDto, new Leave());
         leaveRepository.save(leave);
+
+        sendCommunication(leave, employeesDto);
+    }
+
+    private void sendCommunication(Leave leave, EmployeesDto employeesDto){
+        LeaveMessageDto leaveMessageDto = new LeaveMessageDto(
+                leave.getEmployeeId(),
+                employeesDto.getFirstName(),
+                employeesDto.getLastName(),
+                leave.getCategory(),
+                leave.getReason(),
+                leave.getDate()
+        );
+
+        boolean isSend = streamBridge.send("sendCommunication-out-0", leaveMessageDto);
+
+        System.out.println("Is communication send >" + isSend);
     }
 
     @Override

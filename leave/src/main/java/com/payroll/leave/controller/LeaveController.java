@@ -18,6 +18,7 @@ import java.util.*;
         name = "Leave Controller",
         description = "Leave controller for Payroll"
 )
+@CrossOrigin(origins="http://localhost:4200")
 public class LeaveController {
 
     @Value("${build.version}")
@@ -26,9 +27,6 @@ public class LeaveController {
     @Autowired
     private ILeaveService iLeaveService;
 
-//    public LeaveController(ILeaveService iLeaveService) {
-//        this.iLeaveService = iLeaveService;
-//    }
 
     @PostMapping("/create")
     public ResponseEntity<ResponseDto> createAccounts(@RequestBody LeaveDto leaveDto) {
